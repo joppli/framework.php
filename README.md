@@ -27,10 +27,6 @@ root
 
 ### config/config.yml
 
-The config file can be of what ever flavor you desire as long as you convert it to a php array in the end. I prefer [YAML](http://yaml.org/).
-
-#### Basic example:
-
 ```yaml
 ---
 route:
@@ -46,6 +42,8 @@ route:
         method: get
 ...
 ```
+
+The config file can be of what ever flavor you desire as long as you convert it to a php array in the end. I prefer [YAML](http://yaml.org/).
 
 The config files branches are case insensitive, the leafs are not.
 
