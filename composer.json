@@ -1,7 +1,7 @@
 {
   "name"        : "joppli/framework",
   "type"        : "library",
-  "description" : "Joppli framawork",
+  "description" : "Joppli framework",
   "keywords"    : ["joppli", "framework"],
   "homepage"    : "https://github.com/joppli/framework.php",
   "license"     : "WTFPL",
