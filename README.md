@@ -6,7 +6,7 @@ Licence: [Do What The Fuck You Want To Public License (WTFPL)](http://www.wtfpl.
 
 ---
 
-This documentation is very basic, the framework is developed by me to use by my self. If an intrest is shown by others I will extend the documentation. Show intrest by dropping me a line on twitter [@ErikLandvall](https://twitter.com/ErikLandvall) or simply star/follow/fork the project.
+This documentation is very basic, the framework is developed by me to used by my self. If an intrest is shown by others I will extend the documentation. Show intrest by dropping me a line on twitter [@ErikLandvall](https://twitter.com/ErikLandvall) or simply star/follow/fork the project.
 
 Specific caracter of the framework: the possibility to use a series of dispatchers on each request.
 
