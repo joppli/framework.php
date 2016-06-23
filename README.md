@@ -32,7 +32,7 @@ root
 route:
 - deliverer: Joppli\Deliverer\JsonDeliverer
 - dispatchers:
-  - Resource\User\Operation\Login\LoginUserDispatcher
+  - HelloWorld\HelloWorldDispatcher
   policy:
   - validator: PathCompareValidator
     options:
@@ -94,6 +94,8 @@ class HelloWorldDispatcher implements Dispatcher, RequestAware, ResponseAware
   }
 }
 ```
+
+The dispatcher only needs to implement the `Dispatcher` interface. However, this example also shows how to acces the `Request` and `Response` instances by declaring awareness.
 
 ### composer.json
 
