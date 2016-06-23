@@ -27,7 +27,7 @@ root
 
 ### config/config.yml
 
-The config file be of what ever flavor. I prefer the [YAML](http://yaml.org/), why I use that.
+The config file can be of what ever flavor you desire as long as you convert it to a php array in the end. I prefer [YAML](http://yaml.org/).
 
 #### Basic example:
 
