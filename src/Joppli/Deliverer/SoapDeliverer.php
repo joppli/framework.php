@@ -12,7 +12,7 @@ class SoapDeliverer extends AbstractDeliverer implements RequestAware
 {
   use RequestAwareTrait;
 
-  protected function composeOutput(array $entity)
+  protected function composeOutput(array $entity) : string
   {
     $server = new SoapServer(null, ['uri' =>  $this->request->getUri()]);
     $server->setObject($entity['soap']);
