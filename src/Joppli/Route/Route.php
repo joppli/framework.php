@@ -5,31 +5,23 @@ namespace Joppli\Route;
 class Route
 {
   protected
-    $resource,
-    $operations,
-    $deliverer,
-    $dispatchers = [];
+  $path,
+  $deliverer,
+  $dispatchers = [];
 
   public function __construct(
-    string  $resource,
-    array   $operations,
+    array   $path,
     string  $deliverer,
     array   $dispatchers)
   {
-    $this->resource     = $resource;
-    $this->operations   = $operations;
+    $this->path         = $path;
     $this->deliverer    = $deliverer;
     $this->dispatchers  = $dispatchers;
   }
 
-  public function getResource() : string
+  public function getPath() : array
   {
-    return $this->resource;
-  }
-
-  public function getOperations() : array
-  {
-    return $this->operations;
+    return $this->path;
   }
 
   public function getDeliverer() : string

@@ -8,9 +8,16 @@ class ContentTypeHeaderValidator extends AbstractRequestValidator
 {
   public function validate(Config $options)
   {
-    $contentType = $this->request->getHeader('Content-Type');
-    if(strcasecmp($contentType, $options->type) != 0)
-      throw new Exception\ValidatorException(
-        'input->type MUST match requested content type');
+    $ct     = strtolower($this->request->getHeader('Content-Type'));
+    $types  = $options->type instanceof \Traversable
+            ? $options->type
+            :[$options->type];
+
+    foreach ($types as $type)
+      if(strcasecmp($ct, $type) == 0)
+        return;
+
+    throw new Exception\ValidatorException(
+      'input->type MUST match requested content type');
   }
 }

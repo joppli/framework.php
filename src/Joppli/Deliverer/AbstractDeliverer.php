@@ -3,9 +3,9 @@
 namespace Joppli\Deliverer;
 
 use
-  Joppli\Response\Aware\ResponseAware,
-  Joppli\Response\Aware\ResponseAwareTrait,
-  Joppli\Response\ResponseService;
+Joppli\Response\Aware\ResponseAware,
+Joppli\Response\Aware\ResponseAwareTrait,
+Joppli\Response\ResponseService;
 
 abstract class AbstractDeliverer implements Deliverer, ResponseAware
 {
@@ -22,10 +22,9 @@ abstract class AbstractDeliverer implements Deliverer, ResponseAware
   {
     foreach ($this->response->getHeaders() as $header)
       $this->service->addHeader($header);
-
     $this->service->setStatus($this->response->getStatus());
-
     $output = $this->composeOutput($this->response->getAttributes());
+
     $this->service->output($output);
   }
 

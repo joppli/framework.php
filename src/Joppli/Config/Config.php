@@ -3,18 +3,18 @@
 namespace Joppli\Config;
 
 use
-  ArrayAccess,
-  Iterator,
-  JsonSerializable,
-  stdClass;
+ArrayAccess,
+Iterator,
+JsonSerializable,
+stdClass;
 
-class Config extends stdClass implements ArrayAccess, Iterator, JsonSerializable
+class Config implements ArrayAccess, Iterator, JsonSerializable
 {
   protected
-    $immutable,
-    $data;
+  $immutable,
+  $data;
 
-  public function __construct(array $structure = [], $immutable = false)
+  public function __construct(array $structure = [], $immutable = true)
   {
     $this->data = $this->filter($structure);
     $this->immutable = $immutable;

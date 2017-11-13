@@ -5,11 +5,11 @@ namespace Joppli\Request;
 class Request
 {
   private
-    $protocol,
-    $arguments,
-    $segments,
-    $path,
-    $server;
+  $protocol,
+  $arguments,
+  $segments,
+  $path,
+  $server;
 
   public function __construct(array $arguments, array $server)
   {
@@ -17,12 +17,12 @@ class Request
     $this->server     = $server;
   }
 
-  public function getArg(string $key) : string
+  public function getArg(string $key)
   {
-    return (string) $this->arguments[$key];
+    return $this->arguments[$key];
   }
 
-  public function getArguments() : array
+  public function getArguments()
   {
     return $this->arguments;
   }
@@ -32,27 +32,26 @@ class Request
     return $this->getArg($key);
   }
 
-  public function getHeader(string $name) : string
-  {
-    $nameFiltered = str_replace('-', '_', $name);
-    $header       = strtoupper($nameFiltered);
-
-    return $this->server[$header]
-        ?? $this->server[$this->getProtocol().'_'.$header]
-        ?? '';
-  }
-
-  public function getHost() : string
+  public function getDomain()
   {
     return $this->server['HTTP_HOST'];
   }
 
-  public function getMethod() : string
+  public function getHeader(string $name)
   {
-    return $this->server['REQUEST_METHOD'];
+    $nameFiltered = str_replace('-', '_', $name);
+    $header       = strtoupper($nameFiltered);
+    $key          = $this->getProtocol() . '_' . $header;
+
+    return $this->server[$header] ?? $this->server[$key];
   }
 
-  public function getPath() : string
+  public function getMethod()
+  {
+    return strtolower($this->server['REQUEST_METHOD']);
+  }
+
+  public function getPath()
   {
     if(!$this->path)
       $this->path = strtok($this->getUri(), '?');
@@ -60,7 +59,7 @@ class Request
     return $this->path;
   }
 
-  public function getProtocol() : string
+  public function getProtocol()
   {
     if(!$this->protocol)
     {
@@ -73,13 +72,13 @@ class Request
     return $this->protocol;
   }
 
-  public function getSegment($index) : string
+  public function getSegment($index)
   {
     $segments = $this->getSegments();
     return $segments[$index];
   }
 
-  public function getSegments() : array
+  public function getSegments()
   {
     if(!$this->segments)
       $this->segments = explode('/', $this->getPath());
@@ -87,18 +86,18 @@ class Request
     return $this->segments;
   }
 
-  public function getUri() : string
+  public function getUri()
   {
     return $this->server['REQUEST_URI'];
   }
 
-  public function hasArg(string $key) : bool
+  public function hasArg(string $key)
   {
     return isset($this->arguments[$key]);
   }
 
-  public function isMethod(string $method) : bool
+  public function isMethod(string $method)
   {
-    return strcasecmp($this->getMethod(), $method) === 0;
+    return strcasecmp($this->getMethod(), $method) == 0;
   }
 }

@@ -6,9 +6,9 @@ Licence: [Do What The Fuck You Want To Public License (WTFPL)](http://www.wtfpl.
 
 ---
 
-This documentation is very basic, the framework is developed by me to used by my self. If an intrest is shown by others I will extend the documentation. Show intrest by dropping me a line on twitter [@ErikLandvall](https://twitter.com/ErikLandvall) or simply star/follow/fork the project.
+This documentation is very basic, the framework is developed by me to used by my self. If an interest is shown by others I will extend the documentation. Show interest by dropping me a line on twitter [@ErikLandvall](https://twitter.com/ErikLandvall) or simply star/follow/fork the project.
 
-Specific caracter of the framework: the possibility to use a series of dispatchers on each request.
+Specific characteristics of the framework: the possibility to use a series of dispatchers on each request.
 
 
 ## Skeleton
@@ -59,7 +59,9 @@ chdir($root);
 // Auto loader
 require 'vendor/autoload.php';
 
-$config  = new Joppli\Config\Config(yaml_parse_file('config/config.yml'));
+$parsers = ['yml' => new Joppli\Parser\YamlParser];
+$paths   = ['config'];
+$config  = (new Joppli\Config\ConfigFactory)->create($parsers, $paths);
 $request = (new Joppli\Request\RequestFactory)->create();
 
 // Run application
@@ -82,20 +84,20 @@ use Joppli\Response\Aware\ResponseAwareTrait;
 class HelloWorldDispatcher implements Dispatcher, RequestAware, ResponseAware
 {
   use
-    RouteAwareTrait,
-    UserAwareTrait;
+  RouteAwareTrait,
+  UserAwareTrait;
 
   public function dispatch()
   {
     $host = $this->request->getHost();
-    
+
     $this->response->message = 'Hello world!';
     $this->response->host 	 = $host;
   }
 }
 ```
 
-The dispatcher only needs to implement the `Dispatcher` interface. However, this example also shows how to acces the `Request` and `Response` instances by declaring awareness.
+The dispatcher only needs to implement the `Dispatcher` interface. However, this example also shows how to access the `Request` and `Response` instances by declaring awareness.
 
 ### composer.json
 

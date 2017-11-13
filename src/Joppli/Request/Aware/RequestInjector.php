@@ -3,8 +3,8 @@
 namespace Joppli\Request\Aware;
 
 use
-  Joppli\Builder\Injector,
-  Joppli\Request\Request;
+Joppli\Builder\Injector,
+Joppli\Request\Request;
 
 class RequestInjector implements Injector
 {

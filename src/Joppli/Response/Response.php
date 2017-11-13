@@ -5,9 +5,9 @@ namespace Joppli\Response;
 class Response
 {
   protected
-    $status     = 200,
-    $headers    = [],
-    $attributes = [];
+  $status     = 200,
+  $headers    = [],
+  $attributes = [];
 
   public function clearAttributes()
   {
@@ -17,6 +17,11 @@ class Response
   public function getAttributes() : array
   {
     return $this->attributes;
+  }
+
+  public function getAttribute(string $key)
+  {
+    return $this->attributes[$key];
   }
 
   /**

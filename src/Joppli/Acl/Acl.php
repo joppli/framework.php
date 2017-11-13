@@ -5,9 +5,9 @@ namespace Joppli\Acl;
 class Acl
 {
   protected
-    $fallback = true,
-    $granted  = [],
-    $denied   = [];
+  $fallback = false,
+  $granted  = [],
+  $denied   = [];
 
   /**
    * The deny list is absolute above the grant list. Add a deny rule only if
@@ -54,8 +54,7 @@ class Acl
    * @param string $operation
    * @return bool
    *
-   * if value don't exist in the grant or deny lists, a fallback is used. The
-   * fallback can be changed with `setGrantedFallback`
+   * if value don't exist in the grant or deny lists, a fallback is used.
    */
   public function isGranted(
     string $role,
@@ -63,14 +62,17 @@ class Acl
     string $operation) : bool
   {
     if(isset($this->denied[$resource])
-    && isset($this->denied[$resource][$operation])
-    && in_array($role, $this->denied[$resource][$operation]))
+    && array_intersect([$role, '*'],
+          $this->granted[$resource][$operation]
+       ?? $this->granted[$resource]['*']
+       ?? []))
       return false;
 
     if(isset($this->granted[$resource]))
-      return isset($this->granted[$resource][$operation])
-        ? in_array($role, $this->granted[$resource][$operation])
-        : false;
+      return !!array_intersect([$role, '*'],
+          $this->granted[$resource][$operation]
+       ?? $this->granted[$resource]['*']
+       ?? []);
 
     return $this->fallback;
   }

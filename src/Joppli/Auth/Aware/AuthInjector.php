@@ -2,23 +2,24 @@
 
 namespace Joppli\Auth\Aware;
 
-use Joppli\Auth\Auth;
-use Joppli\Auth\AuthBuilder;
-use Joppli\Builder\Injector;
-use Joppli\Config\Aware\ConfigAware;
-use Joppli\Config\Aware\ConfigAwareTrait;
+use
+Joppli\Acl\Aware\AclAware,
+Joppli\Acl\Aware\AclAwareTrait,
+Joppli\Auth\Auth,
+Joppli\Auth\AuthFactory,
+Joppli\Builder\Injector;
 
-class AuthInjector implements Injector, ConfigAware
+class AuthInjector implements Injector, AclAware
 {
-  use ConfigAwareTrait;
+  use AclAwareTrait;
 
   protected
-    $auth,
-    $builder;
+  $auth,
+  $factory;
 
-  public function __construct(AuthBuilder $builder)
+  public function __construct(AuthFactory $factory)
   {
-    $this->builder = $builder;
+    $this->factory = $factory;
   }
 
   public function inject($instance)
@@ -30,7 +31,7 @@ class AuthInjector implements Injector, ConfigAware
   protected function getAuth() : Auth
   {
     if(!$this->auth)
-      $this->auth = $this->builder->build($this->config);
+      $this->auth = $this->factory->create($this->acl);
 
     return $this->auth;
   }

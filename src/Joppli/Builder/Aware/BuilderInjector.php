@@ -3,8 +3,8 @@
 namespace Joppli\Builder\Aware;
 
 use
-  Joppli\Builder\Injector,
-  Joppli\Builder\Builder;
+Joppli\Builder\Injector,
+Joppli\Builder\Builder;
 
 class BuilderInjector implements Injector
 {

@@ -6,18 +6,24 @@ class RequestFactory
 {
   protected $request;
 
-  public function create() : Request
+  public function create()
   {
     $rawInput   = file_get_contents('php://input');
     $arguments  = $this->composeArgs($rawInput, $_REQUEST);
     $request    = new Request($arguments, $_SERVER);
-
     return $request;
   }
 
-  protected function composeArgs($rawInput, $request) : array
+  protected function composeArgs($rawInput, $request)
   {
-    parse_str($rawInput, $requestParsed);
+    if(in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'])){
+        $requestParsed = json_decode($rawInput, true);
+        if($requestParsed === null){
+          parse_str($rawInput, $requestParsed);
+        }
+    } else {
+      parse_str($rawInput, $requestParsed);
+    }
     return array_merge($request, $requestParsed);
   }
 }

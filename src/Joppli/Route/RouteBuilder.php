@@ -2,11 +2,12 @@
 
 namespace Joppli\Route;
 
-use Joppli\Config\Aware\ConfigAware;
-use Joppli\Config\Aware\ConfigAwareTrait;
-use Joppli\Config\Config;
-use Joppli\Locator\Locator;
-use Joppli\Route\Validator\RouteValidator;
+use
+Joppli\Config\Aware\ConfigAware,
+Joppli\Config\Aware\ConfigAwareTrait,
+Joppli\Config\Config,
+Joppli\Locator\Locator,
+Joppli\Route\Validator\RouteValidator;
 
 class RouteBuilder implements ConfigAware
 {
@@ -21,68 +22,72 @@ class RouteBuilder implements ConfigAware
 
   public function build() : Route
   {
-    $structure['dispatchers'] = [];
-    $structure['operations']  = [];
-    $this->walk($structure, $this->config->route);
+    $route = $this->walk($this->config->router);
 
-    return new Route(
-      $structure['resource']  ?? '',
-      array_unique($structure['operations']),
-      $structure['deliverer'] ?? '',
-      array_unique($structure['dispatchers']));
+    $dispatchers = array_merge(
+      $route['dispatchers.pre']  ?? [],
+      $route['dispatchers']      ?? [],
+      $route['dispatchers.post'] ?? []);
+
+    return new Route($route['path'] ?? [], $route['deliverer'], $dispatchers);
   }
 
-  protected function walk(array &$route, Config $tree)
+  protected function walk(
+    Config  $tree,
+    array   $route = [],
+    array   $path  = []) : array
   {
-    foreach ($tree as $item)
-    {
-      if(!$this->isValid($item))
-        continue;
+    foreach($tree as $name => $item)
+      if($this->isValid($item))
+      {
+        $context   = $path;
+        $context[] = $name;
+        $this->extend($route, $item, $context);
 
-      $this->extend($route, $item);
+        if($item->children)
+          $route = $this->walk($item->children, $route, $context);
+      }
 
-      if($item->child)
-        $this->walk($route, $item->child);
-
-      if($item->resource)
-        break;
-    }
+    return $route;
   }
 
   /**
-   * Extends the structure with the attributes from the item
+   * Extends the route structure with the attributes from the item
    *
    * @param array &$route
    * @param Config $item
+   * @param array $path
    */
-  protected function extend(array &$route, Config $item)
+  protected function extend(array &$route, Config $item, array $path)
   {
-    if($item->resource)
-    {
-      $route['resource']   = $item->resource;
-      $route['operations'] = [];
-    }
+    foreach($item as $key => $value)
+      switch($key)
+      {
+        case 'deliverer':
+          $route[$key] = $item->{$key};
+          break;
 
-    if($item->operation)
-      $route['operations'][] = $item->operation;
+        case 'dispatchers':
+          $route['path'] = $path;
+          $route[$key]   = $item->{$key}->toArray();
+          break;
 
-    if($item->deliverer)
-      $route['deliverer'] = $item->deliverer;
-
-    if($item->dispatchers)
-      $route['dispatchers'] = array_merge(
-        $route['dispatchers'],
-        $item->dispatchers->toArray());
+        case 'dispatchers.pre':
+        case 'dispatchers.post':
+          $route[$key] = $route[$key] ?? [];
+          array_push($route[$key], ...$item->{$key}->toArray());
+          break;
+      }
   }
 
   protected function isValid(Config $item) : bool
   {
     try
     {
-      foreach ($item->policy ?: [] as $policy)
+      foreach ($item->policies ?? [] as $policy)
       {
         $validator = $this->getValidator($policy->validator);
-        $validator->validate($policy->options);
+        $validator->validate($policy);
       }
 
       return true;
@@ -95,14 +100,9 @@ class RouteBuilder implements ConfigAware
 
   protected function getValidator(string $validator) : RouteValidator
   {
-    return $this->locator->get($this->composeValidatorName($validator));
-  }
+    $class      = __NAMESPACE__.'\\Validator\\'.$validator.'Validator';
+    $validator  = class_exists($class) ? $class : $validator;
 
-  protected function composeValidatorName(string $validator) : string
-  {
-    $ns = __NAMESPACE__.'\\Validator\\';
-    return class_exists($ns.$validator)
-      ? $ns.$validator
-      : $validator;
+    return $this->locator->get($validator);
   }
 }

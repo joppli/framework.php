@@ -2,8 +2,9 @@
 
 namespace Joppli\Locator;
 
-use Joppli\Builder\Aware\BuilderAware;
-use Joppli\Builder\Aware\BuilderAwareTrait;
+use
+Joppli\Builder\Aware\BuilderAware,
+Joppli\Builder\Aware\BuilderAwareTrait;
 
 /**
  * Class Locator
@@ -32,5 +33,10 @@ class Locator implements BuilderAware
       $this->container[$service] = $this->builder->build($service);
 
     return $this->container[$service];
+  }
+
+  public function __get($name)
+  {
+    return $this->get($name);
   }
 }

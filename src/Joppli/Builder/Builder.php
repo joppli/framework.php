@@ -3,9 +3,9 @@
 namespace Joppli\Builder;
 
 use
-  ReflectionClass,
-  ReflectionMethod,
-  ReflectionException;
+ReflectionClass,
+ReflectionMethod,
+ReflectionException;
 
 class Builder
 {
