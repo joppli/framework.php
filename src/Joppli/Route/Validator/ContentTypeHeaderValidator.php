@@ -8,14 +8,15 @@ class ContentTypeHeaderValidator extends AbstractRequestValidator
 {
   public function validate(Config $options)
   {
-    $accepts  = explode(',', $this->request->getHeader('Content-Type'));
-    $types    = $options->type instanceof \Traversable
-              ? $options->type
-              :[$options->type];
+    $cts    = explode(';', $this->request->getHeader('Content-Type'));
+    $cts    = array_map('trim', $cts);
+    $types  = $options->type instanceof \Traversable
+            ? $options->type
+            :[$options->type];
 
     foreach ($types as $type)
-      foreach ($accepts as $accept)
-        if(strcasecmp($accept, $type) == 0)
+      foreach ($cts as $ct)
+        if(strcasecmp($ct, $type) == 0)
           return;
 
     throw new Exception\ValidatorException(

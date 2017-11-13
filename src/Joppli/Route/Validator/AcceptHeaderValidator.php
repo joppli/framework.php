@@ -8,7 +8,11 @@ class AcceptHeaderValidator extends AbstractRequestValidator
 {
   public function validate(Config $options)
   {
-    $accepts  = explode(',', $this->request->getHeader('Accept'));
+    $accepts  = [];
+    foreach (explode(';', $this->request->getHeader('Accept')) as $accept)
+      array_push($accepts, ...explode(',', $accept));
+
+    $accepts  = array_map('trim', $accepts);
     $types    = $options->type instanceof \Traversable
               ? $options->type
               :[$options->type];
