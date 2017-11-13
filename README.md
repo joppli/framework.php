@@ -91,8 +91,8 @@ class HelloWorldDispatcher implements Dispatcher, RequestAware, ResponseAware
   {
     $host = $this->request->getHost();
 
-    $this->response->message = 'Hello world!';
-    $this->response->host 	 = $host;
+    $this->response->message  = 'Hello world!';
+    $this->response->host     = $host;
   }
 }
 ```
