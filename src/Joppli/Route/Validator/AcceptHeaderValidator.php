@@ -8,8 +8,17 @@ class AcceptHeaderValidator extends AbstractRequestValidator
 {
   public function validate(Config $options)
   {
-    if(strcasecmp($this->request->getHeader('Accept'), $options->accept) != 0)
-      throw new Exception\ValidatorException(
-        'input->accept MUST match requested "accept" header');
+    $accepts  = explode(',', $this->request->getHeader('Accept'));
+    $types    = $options->type instanceof \Traversable
+              ? $options->type
+              :[$options->type];
+
+    foreach ($types as $type)
+      foreach ($accepts as $accept)
+        if(strcasecmp($accept, $type) == 0)
+          return;
+
+    throw new Exception\ValidatorException(
+      'input->type MUST match requested content type');
   }
 }

@@ -27,7 +27,7 @@ class Request
     return $this->getArg($key);
   }
 
-  public function getDomain()
+  public function getHost()
   {
     return $this->server['HTTP_HOST'];
   }

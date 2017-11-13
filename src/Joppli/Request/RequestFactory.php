@@ -17,7 +17,12 @@ class RequestFactory
 
   protected function composeArgs($rawInput, $request)
   {
-    parse_str($rawInput, $requestParsed);
+    if(strtolower($_SERVER['CONTENT_TYPE']) == 'application/json')
+      $requestParsed = json_decode($rawInput, true);
+
+    else
+      parse_str($rawInput, $requestParsed);
+
     return array_merge($request, $requestParsed);
   }
 }
