@@ -2,7 +2,7 @@
 
 ### PHP Framework
 
-Licence: [Do What The Fuck You Want To Public License (WTFPL)](http://www.wtfpl.net/about/).
+License: [MIT](https://opensource.org/licenses/MIT).
 
 ---
 
