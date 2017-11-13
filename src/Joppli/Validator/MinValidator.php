@@ -6,10 +6,10 @@ use Joppli\Validator\Exception\ValidatorException;
 
 class MinValidator
 {
-  public function validate($input, int $minimum, string $key = '')
+  public function validate($input, int $minimum)
   {
     if($input < $minimum)
       throw new ValidatorException(
-        ($key ? $key : 'input') . ' MUST be more then: ' . ($minimum - 1));
+        'input MUST be more then: ' . ($minimum - 1));
   }
 }

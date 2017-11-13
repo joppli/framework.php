@@ -45,23 +45,6 @@ implements Gateway, ElasticSearch\ElasticSearchClientAware
       }
   }
 
-  public function scroll(string $id, string $time, string &$newId) : array
-  {
-    $query =
-    [
-      'scroll_id' => $id,
-      'scroll'    => $time
-    ];
-    $gatewayResults = $this->client->scroll($query);
-    $results = array();
-    foreach($gatewayResults['hits']['hits'] as $result) {
-      $result['_source']['id'] = $result['_id'];
-      $results[] = $result['_source'];
-    }
-    $newId = $gatewayResults['_scroll_id'];
-    return $results;
-  }
-
   public function retrieve(
     string  $domain,
     string  $type,
@@ -69,9 +52,7 @@ implements Gateway, ElasticSearch\ElasticSearchClientAware
     array   $association  = [],
     array   $order        = [],
     int     $from         = 0,
-    int     $size         = 10000,
-    int    &$count        = 0,
-    string &$scroll       = null) : array
+    int     $size         = 10000) : array
   {
     $query =
     [
@@ -84,96 +65,34 @@ implements Gateway, ElasticSearch\ElasticSearchClientAware
     if($id)
       $association['_id'] = $id;
 
-    if(array_key_exists('id', $association)){
-      $association['_id'] = $association['id'];
-      unset($association['id']);
-    }
-
-    if(array_key_exists('_should', $association)){
-      $should = $association['_should'];
-      unset($association['_should']);
-    } else {
-      $should = [];
-    }
-    if(array_key_exists('_filter', $association)) {
-      $filter = $association['_filter'];
-      unset($association['_filter']);
-    } else {
-      $filter = false;
-    }
-
-    if(array_key_exists('_terms', $association)){
-      $terms = $association['_terms'];
-      unset ($association['_terms']);
-    } else {
-      $terms = false;
-    }
-
-    if($scroll){
-      $query['scroll'] = $scroll;
-    }
-
-    foreach ($association as $property => $value){
+    foreach ($association as $property => $value)
       $query['body']['query']['bool']['must'][] =
-        !is_array($value) || $value['mode'] == 'MATCH'
-        ? [
-          'match' =>
+      [
+        'match' =>
+        [
+          $property =>
           [
-            $property =>
-            [
-              'query'             => (!is_array($value) ? $value : $value['value']) ?: '',
-              'operator'          => 'and',
-              'zero_terms_query'  => 'all'
-            ]
+            'query'             => $value ?: '',
+            'operator'          => 'and',
+            'zero_terms_query'  => 'all'
           ]
         ]
-        : [
-          'match_phrase_prefix' =>
-          [
-            $property => [
-              'query' => $value['value']
-              //,analyzer => 'whatever'
-            ]
-          ]
-        ];
-    }
+      ];
 
-    foreach($should as $property => $value) {
-      $query['body']['query']['bool']['should'][] = ['terms' => [ $property => $value ]];
-    }
+    if(!$query['body']['query'])
+      $query['body']['query']['match_all'] = [];
 
-    if($filter)
-    {
-      $query['body']['query']['bool']['filter'] = $filter;
-    }
-
-    if($terms) {
-      $query['body']['query']['terms'] = $terms;
-    }
-
-    if($order && count($order))
-      $query['body']['sort'] = array_map(
-        function($key, $value){
-          return array($key == 'id' ? '_uid' : $key => $value == 'desc' ? $value : 'asc');
-        },
-        array_keys($order), $order);
-
-      /*= array_map(function($item)
+    if($order)
+      $query['body']['sort'] = array_map(function($item)
       {
         $parts = explode(':', $item);
-        return [$parts[0] == 'id' ? '_uid' : $parts[0]  => ['order' => $parts[1] ?? 'asc']];
-      }, $order);*/
+        return [$parts[0] => ['order' => $parts[1] ?? 'asc']];
+      }, $order);
 
     $results = [];
-    $gatewayResults = $this->client->search($query);
-    foreach($gatewayResults['hits']['hits'] as $result) {
-      $result['_source']['id'] = $result['_id'];
-      $results[] = $result['_source'];
-    }
-    $count = $gatewayResults['hits']['total'];
-    if($scroll){
-      $scroll = $gatewayResults['_scroll_id'];
-    }
+    foreach($this->client->search($query)['hits']['hits'] as $result)
+      $results[$result['_id']] = $result['_source'];
+
     return $results;
   }
 
@@ -190,17 +109,14 @@ implements Gateway, ElasticSearch\ElasticSearchClientAware
       'index'   => $domain,
       'type'    => $type
     ];
-    foreach($this->retrieve($domain, $type, $id, $association) as $item)
+
+    foreach($this->retrieve($domain, $type, $id, $association) as $id => $item)
     {
-      $params['id'] = $item['id'];
-      unset($item['id']);
-      $params['body']['doc'] = $item;
-      //Existing item replaced values
-      foreach ($body as $key => $value) {
-        $params['body']['doc'][$key] = $value;
-      }
+      $params['id'] = $id;
+      $params['body']['doc'] = $body;
+
       // all array values are appended/merged instead of replaced
-      /*array_walk($params['body']['doc'], function(&$value, $key)
+      array_walk($params['body']['doc'], function(&$value, $key)
       {
         if(is_array($value) && isset($item[$key]))
         {
@@ -209,7 +125,8 @@ implements Gateway, ElasticSearch\ElasticSearchClientAware
 
           $value = array_merge($item[$key], $value);
         }
-      });*/
+      });
+
       $this->client->update($params);
     }
   }
@@ -227,9 +144,9 @@ implements Gateway, ElasticSearch\ElasticSearchClientAware
       'type'    => $type
     ];
 
-    foreach($this->retrieve($domain, $type, $id, $association) as $item)
+    foreach($this->retrieve($domain, $type, $id, $association) as $id => $_)
     {
-      $params['id'] = $item['id'];
+      $params['id'] = $id;
       $this->client->delete($params);
     }
   }

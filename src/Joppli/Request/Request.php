@@ -22,11 +22,6 @@ class Request
     return $this->arguments[$key];
   }
 
-  public function getArguments()
-  {
-    return $this->arguments;
-  }
-
   public function __get($key)
   {
     return $this->getArg($key);

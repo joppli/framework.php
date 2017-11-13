@@ -6,9 +6,9 @@ use Joppli\Validator\Exception\ValidatorException;
 
 class NotNullValidator
 {
-  public function validate($input, string $key = '')
+  public function validate($input)
   {
     if($input === null)
-      throw new ValidatorException(($key ? $key : 'input') . ' MUST NOT be null');
+      throw new ValidatorException('input MUST NOT be null');
   }
 }

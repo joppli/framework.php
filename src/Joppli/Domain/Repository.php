@@ -23,24 +23,15 @@ class Repository
     return $this->gateway->create($this->domain, $this->type, $body, $id);
   }
 
-  public function scroll(
-    string $id,
-    string $time,
-    string &$newId) : array
-  {
-    return $this->gateway->scroll($id, $time, $newId);
-  }
-
   public function retrieve(
     string  $id           = null,
     array   $association  = [],
     array   $order        = [],
     int     $from         = 0,
-    int     $size         = 1000,
-    int    &$total        = 0,
-    string &$scroll       = null) : array
+    int     $size         = 1000) : array
   {
-    return $this->gateway->retrieve($this->domain, $this->type, $id, $association, $order, $from, $size, $total, $scroll);
+    return $this->gateway->retrieve(
+      $this->domain, $this->type, $id, $association, $order, $from, $size);
   }
 
   public function update(

@@ -22,9 +22,10 @@ abstract class AbstractDeliverer implements Deliverer, ResponseAware
   {
     foreach ($this->response->getHeaders() as $header)
       $this->service->addHeader($header);
-    $this->service->setStatus($this->response->getStatus());
-    $output = $this->composeOutput($this->response->getAttributes());
 
+    $this->service->setStatus($this->response->getStatus());
+
+    $output = $this->composeOutput($this->response->getAttributes());
     $this->service->output($output);
   }
 

@@ -2,7 +2,7 @@
 
 namespace Joppli\Domain\Gateway\MySql;
 
-use PDO;
+use PDO
 
 trait MySqlPdoAwareTrait
 {

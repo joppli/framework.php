@@ -40,14 +40,7 @@ interface Gateway
     array   $association,
     array   $order,
     int     $from,
-    int     $size,
-    int    &$count) : array;
-
-  public function scroll(
-    string $id,
-    string $time,
-    string &$newId
-    ) : array;
+    int     $size) : array;
 
   /**
    * @param $domain       string

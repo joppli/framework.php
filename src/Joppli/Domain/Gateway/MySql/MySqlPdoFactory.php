@@ -15,8 +15,7 @@ class MySqlPdoFactory implements ConfigAware
   public function create()
   {
     $dsn  = 'mysql:host='.$this->config->mysql->host;
-    $dsn .= ';dbname='.$this->config->mysql->db;
-    $dsn .= ';charset='.$this->config->mysql->charset;
+    $dsn .= 'charset='.$this->config->mysql->charset;
     $user = $this->config->mysql->user;
     $pass = $this->config->mysql->password;
 

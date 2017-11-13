@@ -6,7 +6,7 @@ use Joppli\Validator\Exception\ValidatorException;
 
 class AssociativeArrayValidator
 {
-  public function validate($input, string $key = '')
+  public function validate($input)
   {
     if(!is_array($input))
       return false;
@@ -16,6 +16,6 @@ class AssociativeArrayValidator
     $count    = count($filtered);
 
     if(!(bool)$count)
-      throw new ValidatorException(($key ? $key : 'input') . ' MUST be an associative array');
+      throw new ValidatorException('input MUST be an associative array');
   }
 }

@@ -24,8 +24,5 @@ class Application
   {
     $this->dispatcher->dispatch();
     $this->deliverer->deliver();
-    /*error_log(__FILE__ . ':' . __LINE__ . ' -> ' . http_response_code());
-    error_log("Deliverer: " . json_encode($this->deliverer, JSON_PRETTY_PRINT));
-    error_log(__FILE__ . ':' . __LINE__ . ' -> ' . http_response_code());*/
   }
 }

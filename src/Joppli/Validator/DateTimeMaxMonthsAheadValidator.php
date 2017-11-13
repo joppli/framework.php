@@ -9,7 +9,7 @@ Joppli\Validator\Exception\ValidatorException;
 
 class DateTimeMaxMonthsAheadValidator
 {
-  public function validate($input, int $maxMonths, string $key = '')
+  public function validate($input, int $maxMonths)
   {
     try
     {
@@ -19,7 +19,7 @@ class DateTimeMaxMonthsAheadValidator
     }
     catch(\Exception $e)
     {
-      throw new ValidatorException(($key ? $key : 'input') . ' MUST be of a valid date format');
+      throw new ValidatorException('input MUST be of a valid date format');
     }
 
     $diff   = $input->diff($now);
@@ -27,7 +27,7 @@ class DateTimeMaxMonthsAheadValidator
 
     if($months > $maxMonths)
       throw new ValidatorException(
-        ($key ? $key : 'input') . ' MUST have a date less then '.$maxMonths
+        'input MUST have a date less then '.$maxMonths
         .' month forward in time');
   }
 }

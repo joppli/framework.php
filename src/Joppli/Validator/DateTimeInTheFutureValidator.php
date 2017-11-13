@@ -9,7 +9,7 @@ Joppli\Validator\Exception\ValidatorException;
 
 class DateTimeInTheFutureValidator
 {
-  public function validate($in, string $key = '')
+  public function validate($in)
   {
     try
     {
@@ -19,10 +19,10 @@ class DateTimeInTheFutureValidator
     }
     catch(\Exception $e)
     {
-      throw new ValidatorException(($key ? $key : 'input') . ' MUST be of a valid date format');
+      throw new ValidatorException('input MUST be of a valid date format');
     }
 
     if($input < $now)
-      throw new ValidatorException(($key ? $key : 'input') . ' MUST be of a date in the future');
+      throw new ValidatorException('input MUST be of a date in the future');
   }
 }
