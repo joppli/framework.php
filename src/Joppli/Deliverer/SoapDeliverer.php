@@ -25,7 +25,12 @@ implements RequestAware, BuilderAware
 
     $server = new SoapServer(null, ['uri' =>  $this->request->getUri()]);
     $server->setObject($obj);
+
+    ob_start();
     $server->handle();
-    return '';
+    $xml = ob_get_contents();
+    ob_end_clean();
+
+    return $xml;
   }
 }
